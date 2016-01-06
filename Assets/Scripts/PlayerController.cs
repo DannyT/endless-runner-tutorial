@@ -4,6 +4,11 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public float moveSpeed;
+    public float speedMultiplier;
+    public float speedChangeMilestone;
+
+    private float speedChangeCounter;
+
     public float jumpForce;
 
     public float jumpTime;
@@ -12,9 +17,11 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D myRigidBody;
 
     public bool grounded;
-    public LayerMask whatIsGround;
+    public Transform groundCheck;
 
-    private Collider2D myCollider;
+    public LayerMask whatIsGround;
+    public float groundedRadius;
+    //private Collider2D myCollider;
 
     private Animator myAnimator;
 
@@ -22,7 +29,7 @@ public class PlayerController : MonoBehaviour
 	void Start ()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
-        myCollider = GetComponent<Collider2D>();
+        //myCollider = GetComponent<Collider2D>();
         myAnimator = GetComponent<Animator>();
         jumpTimeCounter = jumpTime;
 	}
@@ -30,7 +37,15 @@ public class PlayerController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        grounded = Physics2D.IsTouchingLayers(myCollider, whatIsGround);
+        //grounded = Physics2D.IsTouchingLayers(myCollider, whatIsGround);
+
+        grounded = Physics2D.OverlapCircle(groundCheck.position, groundedRadius, whatIsGround);
+
+        if(transform.position.x > speedChangeMilestone)
+        {
+            moveSpeed = moveSpeed * speedMultiplier;
+            speedChangeMilestone = speedChangeMilestone * speedMultiplier;
+        }
 
         myRigidBody.velocity = new Vector2(moveSpeed, myRigidBody.velocity.y);
 
@@ -54,6 +69,7 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonUp(0))
         {
             jumpTimeCounter = 0;
+            grounded = false;
         }
 
         if(grounded)
