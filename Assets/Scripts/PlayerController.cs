@@ -5,9 +5,11 @@ public class PlayerController : MonoBehaviour
 {
     public float moveSpeed;
     public float speedMultiplier;
-    public float speedChangeMilestone;
+    private float startSpeed;
 
-    private float speedChangeCounter;
+    public float speedIncreaseMilestone;
+    private float speedMilestoneCount;
+    private float startSpeedMilestoneCount;
 
     public float jumpForce;
 
@@ -21,30 +23,33 @@ public class PlayerController : MonoBehaviour
 
     public LayerMask whatIsGround;
     public float groundedRadius;
-    //private Collider2D myCollider;
 
     private Animator myAnimator;
+
+    public GameManager gameManager;
+
 
 	// Use this for initialization
 	void Start ()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
-        //myCollider = GetComponent<Collider2D>();
         myAnimator = GetComponent<Animator>();
         jumpTimeCounter = jumpTime;
-	}
+
+        startSpeed = moveSpeed;
+        startSpeedMilestoneCount = speedMilestoneCount;
+
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
-        //grounded = Physics2D.IsTouchingLayers(myCollider, whatIsGround);
-
         grounded = Physics2D.OverlapCircle(groundCheck.position, groundedRadius, whatIsGround);
 
-        if(transform.position.x > speedChangeMilestone)
+        if(transform.position.x > speedIncreaseMilestone)
         {
             moveSpeed = moveSpeed * speedMultiplier;
-            speedChangeMilestone = speedChangeMilestone * speedMultiplier;
+            speedIncreaseMilestone = speedIncreaseMilestone * speedMultiplier;
         }
 
         myRigidBody.velocity = new Vector2(moveSpeed, myRigidBody.velocity.y);
@@ -80,4 +85,14 @@ public class PlayerController : MonoBehaviour
         myAnimator.SetFloat("Speed", myRigidBody.velocity.x);
         myAnimator.SetBool("Grounded", grounded);
 	}
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if(other.gameObject.tag == "killbox")
+        {
+            gameManager.RestartGame();
+            moveSpeed = startSpeed;
+            speedMilestoneCount = startSpeedMilestoneCount;
+        }
+    }
 }
