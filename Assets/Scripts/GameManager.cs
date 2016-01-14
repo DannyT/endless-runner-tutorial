@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     private PlatformDestroyer[] platforms;
 
+    public ScoreManager scoreManager;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -32,6 +34,7 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator RestartGameCo()
     {
+        scoreManager.scoreIncreasing = false;
         thePlayer.gameObject.SetActive(false);
         yield return new WaitForSeconds(0.5f);
         thePlayer.transform.position = playerStartPoint;
@@ -42,7 +45,10 @@ public class GameManager : MonoBehaviour
         }
 
         platformGenerator.position = platformStartPoint;
+
         thePlayer.gameObject.SetActive(true);
-        
+        scoreManager.scoreCount = 0;
+        scoreManager.scoreIncreasing = true; 
+
     }
 }
