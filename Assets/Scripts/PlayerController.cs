@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public bool grounded;
     public Transform groundCheck;
     private bool hasJumped;
+    private bool canDoubleJump;
 
     public LayerMask whatIsGround;
     public float groundedRadius;
@@ -61,6 +62,15 @@ public class PlayerController : MonoBehaviour
             {
                 myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpForce);
                 hasJumped = true;
+                canDoubleJump = true;
+            }
+
+            if(!grounded && canDoubleJump)
+            {
+                myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpForce);
+                hasJumped = true;
+                jumpTimeCounter = jumpTime;
+                canDoubleJump = false;
             }
         }
 
