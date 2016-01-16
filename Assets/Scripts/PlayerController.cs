@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     public bool grounded;
     public Transform groundCheck;
+    private bool hasJumped;
 
     public LayerMask whatIsGround;
     public float groundedRadius;
@@ -38,7 +39,7 @@ public class PlayerController : MonoBehaviour
 
         startSpeed = moveSpeed;
         startSpeedMilestoneCount = speedMilestoneCount;
-
+        hasJumped = false;
     }
 	
 	// Update is called once per frame
@@ -59,12 +60,13 @@ public class PlayerController : MonoBehaviour
             if (grounded)
             {
                 myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpForce);
+                hasJumped = true;
             }
         }
 
         if(Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
         {
-            if(jumpTimeCounter > 0)
+            if(jumpTimeCounter > 0 && hasJumped)
             {
                 myRigidBody.velocity = new Vector2(myRigidBody.velocity.x, jumpForce);
                 jumpTimeCounter -= Time.deltaTime;
@@ -75,6 +77,7 @@ public class PlayerController : MonoBehaviour
         {
             jumpTimeCounter = 0;
             grounded = false;
+            hasJumped = false;
         }
 
         if(grounded)
